@@ -6,6 +6,7 @@ let cosmosHeight = window.innerHeight
 let cosmosWidth = window.innerWidth
 function determineWorldSize(width, height) {
     if (width > height) {
+
         return width
     } else {
         console.log(height);
@@ -13,6 +14,11 @@ function determineWorldSize(width, height) {
     }
 
 }
+
+
+let timeToNextFrame=0
+let frameInterval=500
+let lastTime=0
 
 
 let worldSize = determineWorldSize(cosmosWidth, cosmosHeight)
@@ -346,12 +352,19 @@ window.addEventListener('keyup', (event) => {
 
 let x = 0
 
+/**
+timeToNextFrame=0
+frameInterval=500
+lastTime=0
+ */
 
-function animate() {
+function animate(timestamp) {
     animationFrame++
-
+    let deltaTime=timestamp-lastTime;
+    lastTime = timestamp
+    timeToNextFrame+=deltaTime
+    if(timeToNextFrame>frameInterval){
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    x -= 0.2
     // ctx.drawImage(background, x, 0)
     background.drawBG()
     background.updateCosmosBackground()
@@ -375,16 +388,10 @@ function animate() {
 
     })
     light.draw()
+}
     requestAnimationFrame(animate)
 }
-animate()
-
-function cameraFollow(y) {
-    window.scrollTo({
-        top: y,
-        // behavior: 'smooth'
-    });
-}
+animate(0)
 
 
 
