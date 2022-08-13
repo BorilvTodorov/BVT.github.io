@@ -6,7 +6,6 @@ let cosmosHeight = window.innerHeight
 let cosmosWidth = window.innerWidth
 function determineWorldSize(width, height) {
     if (width > height) {
-        console.log(width);
         return width
     } else {
         console.log(height);
@@ -376,8 +375,6 @@ function animate() {
 
     })
     light.draw()
-    console.log(player.y);
-    console.log(worldSize);
     requestAnimationFrame(animate)
 }
 animate()
