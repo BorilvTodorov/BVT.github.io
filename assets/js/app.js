@@ -1,6 +1,15 @@
 /** @type{HTMLCanvasElement} */
+let tracer = document.getElementById('tracer')
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
+
+function updateTracer(x, y, offset) {
+    tracer.style.left = x
+    tracer.style.top = y - offset * 3
+    tracer.scrollIntoView()
+}
+
+
 
 let cosmosHeight = window.innerHeight
 let cosmosWidth = window.innerWidth
@@ -16,13 +25,13 @@ function determineWorldSize(width, height) {
 }
 
 
-let timeToNextFrame=0
-let frameInterval=500
-let lastTime=0
+let timeToNextFrame = 0
+let frameInterval = 500
+let lastTime = 0
 
 
 let worldSize = determineWorldSize(cosmosWidth, cosmosHeight)
-
+console.log(worldSize);
 canvas.style.width = worldSize
 canvas.style.height = worldSize
 canvas.width = worldSize
@@ -56,26 +65,26 @@ class Planet {
         this.curve = ((canvas.width / 10))
         this.baseCollission = false
         this.rockShowerSpeed = Math.random() * (0.2 + 4) + 0.2
-        this.playerSpeedX = 3
-        this.playerSpeedY = 3
-        this.exceleration = 0.05
-        this.backgroundSpeed=0.3
+        this.playerSpeedX = worldSize/9
+        this.playerSpeedY = worldSize/9
+        this.exceleration = 0.02
+        this.backgroundSpeed = 0.3
 
     }
-    updateCosmosBackground(){
-        if(this.x<=-this.width){
-            this.x=0
+    updateCosmosBackground() {
+        if (this.x <= -this.width) {
+            this.x = 0
         }
         // if(this.x2<=-this.width){
         //     this.x2=this.width + this.x -this.backgroundSpeed
         // }
-        this.x= Math.floor(this.x-this.backgroundSpeed)
+        this.x = Math.floor(this.x - this.backgroundSpeed)
         // this.x2= Math.floor(this.x2-this.backgroundSpeed)
 
     }
-    drawBG(){
+    drawBG() {
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
-        ctx.drawImage(this.image, this.x+ this.width,this.y, this.width, this.height)
+        ctx.drawImage(this.image, this.x + this.width, this.y, this.width, this.height)
     }
     updateBackgroundPlanets() {
         this.x -= this.speed
@@ -103,10 +112,12 @@ class Planet {
     draw() {
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
     }
-   
+
 
 
     playerMovement() {
+
+        updateTracer(this.x, this.y, this.width)
         if (this.playerSpeedX >= 10) this.playerSpeedX = 10
         if (this.playerSpeedY >= 10) this.playerSpeedY = 10
 
@@ -360,35 +371,35 @@ lastTime=0
 
 function animate(timestamp) {
     animationFrame++
-    let deltaTime=timestamp-lastTime;
+    let deltaTime = timestamp - lastTime;
     lastTime = timestamp
-    timeToNextFrame+=deltaTime
-    if(timeToNextFrame>frameInterval){
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    // ctx.drawImage(background, x, 0)
-    background.drawBG()
-    background.updateCosmosBackground()
+    timeToNextFrame += deltaTime
+    if (timeToNextFrame > frameInterval) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        // ctx.drawImage(background, x, 0)
+        background.drawBG()
+        background.updateCosmosBackground()
 
-    planetsArray.forEach(planet => {
-        planet.updateBackgroundPlanets()
-        planet.draw()
-    })
+        planetsArray.forEach(planet => {
+            planet.updateBackgroundPlanets()
+            planet.draw()
+        })
 
-    basesArray.forEach(basePlanet => {
-        basePlanet.updateBase()
-        basePlanet.draw()
+        basesArray.forEach(basePlanet => {
+            basePlanet.updateBase()
+            basePlanet.draw()
 
-    })
-    player.draw()
-    player.playerMovement()
+        })
+        player.draw()
+        player.playerMovement()
 
-    rockShower.forEach(rock => {
-        rock.spaceDebris()
-        rock.draw()
+        rockShower.forEach(rock => {
+            rock.spaceDebris()
+            rock.draw()
 
-    })
-    light.draw()
-}
+        })
+        light.draw()
+    }
     requestAnimationFrame(animate)
 }
 animate(0)
