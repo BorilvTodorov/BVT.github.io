@@ -459,12 +459,12 @@ function animate(timestamp) {
             rock.spaceDebris()
             rock.draw()
             if (checkForCollision(player, rock)) {
-               
+
                 soundsOBJ.hit[randomNUmberInArray(soundsOBJ.hit)].play()
                 let randomSize = Math.floor(Math.random() * (rockSizeMin + rockSizeMax) + rockSizeMin)
                 rock.x = Math.random() * (0 - worldSize) + 0
-                rock.width=randomSize
-                rock.height=randomSize
+                rock.width = randomSize
+                rock.height = randomSize
             }
 
         })
@@ -491,52 +491,59 @@ animate(0)
  total 250
  */
 
-function resetMovement(){
-    keys.a.pressed=false
-    keys.d.pressed=false
-    keys.s.pressed=false
-    keys.w.pressed=false
-    keys.a.exelarate=false
-    keys.d.exelarate=false
-    keys.s.exelarate=false
-    keys.w.exelarate=false
+function resetMovement() {
+    keys.a.pressed = false
+    keys.d.pressed = false
+    keys.s.pressed = false
+    keys.w.pressed = false
+    keys.a.exelarate = false
+    keys.d.exelarate = false
+    keys.s.exelarate = false
+    keys.w.exelarate = false
     player.playerSpeedX = worldSize / 900
     player.playerSpeedY = worldSize / 900
 }
 
 
-let moveUp=document.querySelector('.up')
-let moveDown=document.querySelector('.down')
-let moveLeft=document.querySelector('.left')
-let moveRight=document.querySelector('.right')
-let braek=document.querySelector('.break')
-let controls=document.querySelector('.controls')
+let moveUp = document.querySelector('.up')
+let moveDown = document.querySelector('.down')
+let moveLeft = document.querySelector('.left')
+let moveRight = document.querySelector('.right')
+let braek = document.querySelector('.break')
+let controls = document.querySelector('.controls')
+controls.style.width = worldSize / 10;
+controls.style.height = worldSize / 10;
+if (worldSize > 1024) {
+    controls.style.width = 80
+    controls.style.height = 80
 
-moveUp.addEventListener('click',function(){
+}
+
+moveUp.addEventListener('click', function () {
     resetMovement()
-    keys.w.pressed=true
-    keys.w.exelarate=true
+    keys.w.pressed = true
+    keys.w.exelarate = true
 })
 
-moveDown.addEventListener('click',function(){
+moveDown.addEventListener('click', function () {
     resetMovement()
-    keys.s.pressed=true
-    keys.s.exelarate=true
+    keys.s.pressed = true
+    keys.s.exelarate = true
 })
 
-moveLeft.addEventListener('click',function(){
+moveLeft.addEventListener('click', function () {
     resetMovement()
-    keys.a.pressed=true
-    keys.a.exelarate=true
+    keys.a.pressed = true
+    keys.a.exelarate = true
 })
 
-moveRight.addEventListener('click',function(){
+moveRight.addEventListener('click', function () {
     resetMovement()
-    keys.d.pressed=true
-    keys.d.exelarate=true
+    keys.d.pressed = true
+    keys.d.exelarate = true
 })
 
-braek.addEventListener('click',function(){
+braek.addEventListener('click', function () {
     resetMovement()
     player.image.src = "./assets/images/robotSprites/RobotMovement/idle.png"
 })
@@ -546,5 +553,5 @@ function updateTracer(x, y, offset) {
     tracer.style.left = x
     tracer.style.top = y - offset * 3
     tracer.scrollIntoView()
-    
+
 }
