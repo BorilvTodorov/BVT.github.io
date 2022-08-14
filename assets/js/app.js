@@ -236,7 +236,7 @@ for (let i = 0; i < numberOfPlanets; i++) {
 
 
 
-// Setup bases?
+// Setup mainPlanets?
 const basesArray = []
 let baseGap = basesSize * 0.5
 let baseA = (new Planet(`./assets/images/planets/BaseB.png`, basesSize))
@@ -261,6 +261,12 @@ light.width = lightSize
 light.height = lightSize
 light.x = (-lightSize / 2)
 light.y = (worldSize / 2 - (lightSize / 2))
+
+
+// setup SpaceShip
+let spaceShip = (new Planet("./assets/images/spaceship/spaceship.png", basesSize))
+spaceShip.x=0
+spaceShip.y=worldSize-(basesSize*1.1)
 
 
 //  rocks
@@ -451,7 +457,7 @@ function animate(timestamp) {
         //     particles.animateParticles()
         //     particles.drawParticles()
         // })
-
+        spaceShip.draw()
         player.draw()
         player.playerMovement()
 
