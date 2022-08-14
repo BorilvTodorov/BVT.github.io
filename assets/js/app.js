@@ -334,9 +334,6 @@ const keys = {
 }
 
 window.addEventListener('keydown', (event) => {
-
-    resetMovement()
-
     switch (event.key) {
         case "a": // Left
             keys.a.pressed = true
