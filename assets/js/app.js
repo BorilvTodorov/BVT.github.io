@@ -13,6 +13,7 @@ function updateTracer(x, y, offset) {
 
 let cosmosHeight = window.innerHeight
 let cosmosWidth = window.innerWidth
+const staggerFrames = 5
 function determineWorldSize(width, height) {
     if (width > height) {
 
@@ -37,7 +38,7 @@ canvas.style.height = worldSize
 canvas.width = worldSize
 canvas.height = worldSize
 
-
+let jetEngineArray = []
 let basesSize = worldSize / 5
 let numberOfPlanets = Math.ceil(worldSize / 40)
 let planetSizeMax = 0.1
@@ -58,28 +59,42 @@ class Planet {
         this.width = planetSize;
         this.height = planetSize;
         this.x = Math.random() * (canvas.width - this.width)
-        // this.x2=this.width
         this.y = Math.random() * (canvas.height - this.height)
         this.angle = worldSize / 2
         this.angleSPeed = Math.random() * (0.05 + 0.01) + 0.05
         this.curve = ((canvas.width / 10))
         this.baseCollission = false
         this.rockShowerSpeed = Math.random() * (0.2 + 4) + 0.2
-        this.playerSpeedX = worldSize/9
-        this.playerSpeedY = worldSize/9
+        this.playerSpeedX = worldSize / 900
+        this.playerSpeedY = worldSize / 900
         this.exceleration = 0.02
         this.backgroundSpeed = 0.3
+        this.praticlesSpeedX = Math.random() * 0.3 - 0.1;
+        this.praticlesSpeedY = Math.random() * 0.3 - 0.1;
+        this.spriteWidth = 550
+        this.spriteHeight = 550
+        this.frameX = 0
+        this.frameY = 0
+        this.bounce = 0
 
     }
+    // particles draw and  animation
+    animateParticles() {
+        this.x += this.praticlesSpeedX
+        this.y += this.praticlesSpeedY
+    }
+    drawParticles() {
+        ctx.fillStyle = 'blue'
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.width, this.height, Math.PI * 2)
+        ctx.fill()
+    }
+    // Background draw and  animation
     updateCosmosBackground() {
         if (this.x <= -this.width) {
             this.x = 0
         }
-        // if(this.x2<=-this.width){
-        //     this.x2=this.width + this.x -this.backgroundSpeed
-        // }
         this.x = Math.floor(this.x - this.backgroundSpeed)
-        // this.x2= Math.floor(this.x2-this.backgroundSpeed)
 
     }
     drawBG() {
@@ -93,13 +108,6 @@ class Planet {
         }
 
     }
-    updateBase() {
-        if (!this.baseCollission) {
-            this.y += 3 * Math.sin(this.angle)
-            if (animationFrame % 2 === 0) this.angle += this.angleSPeed
-        }
-
-    }
     spaceDebris() {
         this.x += this.rockShowerSpeed
         this.y += this.rockShowerSpeed
@@ -109,13 +117,35 @@ class Planet {
             this.y = -this.width
         }
     }
+    // Main 3 planets animation
+    updateBase() {
+        // if (!this.baseCollission === true) {
+        //     this.y += 1 * Math.sin(this.angle)
+        //     if (animationFrame % 14 === 0) this.angle += this.angleSPeed
+        // }
+
+
+
+    }
+    drawBase() {
+        ctx.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height)
+        if (animationFrame % staggerFrames == 0) {
+            if (this.frameX < 23) this.frameX++
+            else this.frameX = 0
+            ctx.strokeStyle = 'white'
+            // ctx.strokeRect(this.x, this.y, this.width, this.height)
+        }
+    }
     draw() {
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
+
     }
 
 
-
+    // player animation
     playerMovement() {
+        ctx.strokeStyle = 'white'
+        // ctx.strokeRect(this.x +(this.width*0.3), this.y+(this.height*0.3), this.width-(this.width*0.5), this.height-(this.height*0.5))
 
         updateTracer(this.x, this.y, this.width)
         if (this.playerSpeedX >= 10) this.playerSpeedX = 10
@@ -156,7 +186,6 @@ class Planet {
                 this.y = 0 + (this.height * 2)
             }
         }
-
     }
 
 }
@@ -208,23 +237,25 @@ for (let i = 0; i < numberOfPlanets; i++) {
 }
 
 
+
+
+
 // Setup bases?
 const basesArray = []
-let baseA = (new Planet(`./assets/images/planets/24.png`, basesSize))
-baseA.x = (worldSize / 2 - basesSize) - (basesSize / 2)
+let baseGap = basesSize * 0.5
+let baseA = (new Planet(`./assets/images/planets/BaseB.png`, basesSize))
+baseA.x = baseGap
 baseA.y = (worldSize / 2) + (basesSize * -0.5)
 baseA.curve = basesSize
 basesArray.push(baseA)
 
-let baseB = (new Planet(`./assets/images/planets/6.png`, basesSize * 1.2))
-baseB.curve = basesSize * 1.5
-baseB.x = (worldSize / 2) - (basesSize / 2)
+let baseB = (new Planet(`./assets/images/planets/BaseA.png`, basesSize))
+baseB.x = (worldSize / 2) - baseGap
 baseB.y = (worldSize / 2) + (basesSize * -0.5)
 basesArray.push(baseB)
 
-let baseC = (new Planet(`./assets/images/planets/16.png`, basesSize * 1.5))
-baseC.curve = basesSize * 2
-baseC.x = (worldSize / 2 + basesSize) - (basesSize / 2)
+let baseC = (new Planet(`./assets/images/planets/BaseC.png`, basesSize))
+baseC.x = worldSize - basesSize - baseGap
 baseC.y = (worldSize / 2) + (basesSize * -0.5)
 basesArray.push(baseC)
 
@@ -261,9 +292,9 @@ for (let i = 0; i < numberOfDebris; i++) {
 
 
 // create rockShower
-let rocks = worldSize / 80
-let rockSizeMin = worldSize / 300
-let rockSizeMax = worldSize / 150
+let rocks = Math.ceil(worldSize / 200)
+let rockSizeMin = worldSize / 100
+let rockSizeMax = worldSize / 500
 for (let i = 0; i < rocks; i++) {
     let randomSize = Math.floor(Math.random() * (rockSizeMin + rockSizeMax) + rockSizeMin)
     let randomNumber = randomNUmberInArray(rocksImages)
@@ -272,17 +303,18 @@ for (let i = 0; i < rocks; i++) {
 }
 
 
-
+console.log(rockShower);
 function randomNUmberInArray(array) {
     return Math.floor(Math.random() * ((array.length) - 0))
 }
 
-
+// create Player
 // player moevement
 let playerSize = worldSize * 0.08
 const player = new Planet("./assets/images/robotSprites/RobotMovement/Down-1.png", playerSize)
 player.x = (worldSize / 2 + playerSize) - (playerSize)
 player.y = (worldSize * 0.35) + (playerSize * -0.5)
+
 
 
 const keys = {
@@ -337,22 +369,22 @@ window.addEventListener('keyup', (event) => {
         case "a": // Left
             keys.a.pressed = false
             keys.a.exelarate = false
-            player.playerSpeedX = 2
+            player.playerSpeedX = worldSize / 900
             break;
         case "d":// Right
             keys.d.pressed = false
             keys.d.exelarate = false
-            player.playerSpeedX = 2
+            player.playerSpeedX = worldSize / 900
             break;
         case "w":// UP
             keys.w.pressed = false
             keys.w.exelarate = false
-            player.playerSpeedY = 2
+            player.playerSpeedY = worldSize / 900
             break;
         case "s": // Down
             keys.s.pressed = false
             keys.s.exelarate = false
-            player.playerSpeedY = 2
+            player.playerSpeedY = worldSize / 900
             break;
     }
 
@@ -360,23 +392,51 @@ window.addEventListener('keyup', (event) => {
 
 
 
+let particles
+function jetEngine() {
+    for (let i = 0; i < 100; i++) {
+        particles = new Planet('./assets/images/Background/background.png', 100)
+        particles.x = Math.random() * (0.2 + 4) + 0.2
+        particles.y = Math.random() * (0.2 + 4) + 0.2
+        jetEngineArray.push(particles)
 
-let x = 0
+    }
+}
+console.log(jetEngineArray);
+jetEngine()
 
-/**
-timeToNextFrame=0
-frameInterval=500
-lastTime=0
- */
 
+function checkForCollision(rect1, rect2) {
+    // ctx.strokeRect(rect1.x +(rect1.width*0.3), rect1.y+(rect1.height*0.3), rect1.width-(rect1.width*0.5), rect1.height-(rect1.height*0.5))
+    if ((rect1.x + (rect1.width * 0.3)) > rect2.x + rect2.width ||
+        (rect1.x + (rect1.width * 0.3)) + (rect1.width - (rect1.width * 0.5)) < rect2.x ||
+        (rect1.y + (rect1.height * 0.3)) > rect2.y + rect2.height ||
+        (rect1.y + (rect1.height * 0.3)) + (rect1.height - (rect1.height * 0.5)) < rect2.y) {
+    } else {
+        return true
+    }
+}
+
+
+
+
+let soundsOBJ = {
+    hit: [],
+}
+// soundsOBJ.hit.push(new Audio("./assets/sounds/Clank1.wav"))
+// soundsOBJ.hit.push(new Audio("./assets/sounds/Clank2.wav"))
+soundsOBJ.hit.push(new Audio("./assets/sounds/Clank3.wav"))
 function animate(timestamp) {
-    animationFrame++
+
+    //collission
+
+
     let deltaTime = timestamp - lastTime;
     lastTime = timestamp
     timeToNextFrame += deltaTime
     if (timeToNextFrame > frameInterval) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        // ctx.drawImage(background, x, 0)
+
         background.drawBG()
         background.updateCosmosBackground()
 
@@ -387,22 +447,55 @@ function animate(timestamp) {
 
         basesArray.forEach(basePlanet => {
             basePlanet.updateBase()
-            basePlanet.draw()
-
+            basePlanet.drawBase()
+            if (checkForCollision(player, basePlanet, 0, 0)) {
+                console.log('Planet Collission');
+            }
         })
+
+        // jetEngineArray.forEach(particle => {
+        //     particles.animateParticles()
+        //     particles.drawParticles()
+        // })
+
         player.draw()
         player.playerMovement()
 
         rockShower.forEach(rock => {
             rock.spaceDebris()
             rock.draw()
+            if (checkForCollision(player, rock)) {
+               
+                soundsOBJ.hit[randomNUmberInArray(soundsOBJ.hit)].play()
+                let randomSize = Math.floor(Math.random() * (rockSizeMin + rockSizeMax) + rockSizeMin)
+                rock.x = Math.random() * (0 - worldSize) + 0
+                rock.width=randomSize
+                rock.height=randomSize
+            }
 
         })
+
         light.draw()
     }
+
+    animationFrame++
     requestAnimationFrame(animate)
 }
 animate(0)
 
 
+// let particles = new Planet('./assets/images/Background/background.png', 10)
+// particles.x = player.x + player.width / 2
+// particles.y = player.y + player.height
 
+
+/**
+ * 
+ * 
+ Offset H= 43
+ offset Width=46
+
+ total 250
+
+
+ */
