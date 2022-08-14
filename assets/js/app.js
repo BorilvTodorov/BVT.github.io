@@ -3,11 +3,7 @@ let tracer = document.getElementById('tracer')
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 
-function updateTracer(x, y, offset) {
-    tracer.style.left = x
-    tracer.style.top = y - offset * 3
-    tracer.scrollIntoView()
-}
+
 
 
 
@@ -339,6 +335,7 @@ const keys = {
 
 window.addEventListener('keydown', (event) => {
 
+    resetMovement()
 
     switch (event.key) {
         case "a": // Left
@@ -494,8 +491,63 @@ animate(0)
  * 
  Offset H= 43
  offset Width=46
-
  total 250
-
-
  */
+
+function resetMovement(){
+    keys.a.pressed=false
+    keys.d.pressed=false
+    keys.s.pressed=false
+    keys.w.pressed=false
+    keys.a.exelarate=false
+    keys.d.exelarate=false
+    keys.s.exelarate=false
+    keys.w.exelarate=false
+    player.playerSpeedX = worldSize / 900
+    player.playerSpeedY = worldSize / 900
+}
+
+
+let moveUp=document.querySelector('.up')
+let moveDown=document.querySelector('.down')
+let moveLeft=document.querySelector('.left')
+let moveRight=document.querySelector('.right')
+let braek=document.querySelector('.break')
+let controls=document.querySelector('.controls')
+
+moveUp.addEventListener('click',function(){
+    resetMovement()
+    keys.w.pressed=true
+    keys.w.exelarate=true
+})
+
+moveDown.addEventListener('click',function(){
+    resetMovement()
+    keys.s.pressed=true
+    keys.s.exelarate=true
+})
+
+moveLeft.addEventListener('click',function(){
+    resetMovement()
+    keys.a.pressed=true
+    keys.a.exelarate=true
+})
+
+moveRight.addEventListener('click',function(){
+    resetMovement()
+    keys.d.pressed=true
+    keys.d.exelarate=true
+})
+
+braek.addEventListener('click',function(){
+    resetMovement()
+    player.image.src = "./assets/images/robotSprites/RobotMovement/idle.png"
+})
+
+
+function updateTracer(x, y, offset) {
+    tracer.style.left = x
+    tracer.style.top = y - offset * 3
+    tracer.scrollIntoView()
+    
+}
