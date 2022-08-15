@@ -54,7 +54,7 @@ body{
 }
 /* +35 */
 .card{
-   
+    user-select: auto;
     position: absolute;
     background: rgba(255, 255, 255, 0.15);
     font-size: 30px;
@@ -98,6 +98,7 @@ body{
     height: 100%;
     scrollbar-width: none;
     border-left: 1px white solid;
+    line-height:inherit
 }
 
 a{
@@ -111,21 +112,24 @@ a{
     color: rgb(231, 178, 223);
 
 }
-.BaseA a{
+.BaseA{
     color: pink;
+    border-color: pink;
 
 }
 
 /*  base B */
 .BaseB{
-    color: orange;
+    color: rgb(252, 185, 61);
+    border-color: orange
 }
 
 
 
 /*  base B */
 .BaseC{
-    color:lightskyblue
+    color:lightskyblue;
+    border-color: lightskyblue
 
 }
 

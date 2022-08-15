@@ -15,7 +15,6 @@ function determineWorldSize(width, height) {
 
         return width
     } else {
-        console.log(height);
         return height
     }
 
@@ -25,17 +24,17 @@ function determineWorldSize(width, height) {
 let timeToNextFrame = 0
 let frameInterval = 500
 let lastTime = 0
+let cardIsDisplayed = false
 
 
 let worldSize = determineWorldSize(cosmosWidth, cosmosHeight)
-console.log(worldSize);
 canvas.style.width = worldSize
 canvas.style.height = worldSize
 canvas.width = worldSize
 canvas.height = worldSize
 
-let cardWidth=worldSize/3.5
-let cardHeight = worldSize/6
+let cardWidth = worldSize / 3.5
+let cardHeight = worldSize / 6
 let jetEngineArray = []
 let basesSize = worldSize / 5
 let numberOfPlanets = Math.ceil(worldSize / 40)
@@ -74,6 +73,7 @@ class Planet {
         this.frameX = 0
         this.frameY = 0
         this.bounce = 0
+        this.displayHTML = false
 
     }
     // particles draw and  animation
@@ -307,7 +307,6 @@ for (let i = 0; i < rocks; i++) {
 }
 
 
-console.log(rockShower);
 function randomNUmberInArray(array) {
     return Math.floor(Math.random() * ((array.length) - 0))
 }
@@ -404,7 +403,6 @@ function jetEngine() {
 
     }
 }
-console.log(jetEngineArray);
 jetEngine()
 
 
@@ -420,7 +418,13 @@ function checkForCollision(rect1, rect2) {
 }
 
 
-
+function updateHtmlFn() {
+    updateHtml = false
+    setTimeout(() => {
+        updateHtml = true
+    }, "1000")
+}
+let updateHtml = true
 
 let soundsOBJ = {
     hit: [],
@@ -451,23 +455,37 @@ function animate(timestamp) {
             basePlanet.updateBase()
             basePlanet.drawBase()
         })
-        if (cardIsDisplayed) {
-            card.style.display = 'none'
-        }
+
+        if(!(checkForCollision(player, baseA, 0, 0))&&!(checkForCollision(player, baseB, 0, 0))&&!(checkForCollision(player, baseC, 0, 0))&&!(checkForCollision(player, spaceShip, 0, 0)))card.style.display='none'
+
 
         if (checkForCollision(player, baseA, 0, 0)) {
-            console.log('Planet Collission A');
-            // dispalyHTMLCard(card,offsetTop,OffsetLeft,width,height,className)
-            dispalyHTMLCard(card, 40, 10, cardWidth, cardHeight,'BaseA',contentObj.cardA)
+            if (updateHtml) {
+                dispalyHTMLCard(card, 40, 10, cardWidth, cardHeight, 'BaseA', contentObj.cardA)
+                updateHtmlFn()
+            }
         }
 
+
         if (checkForCollision(player, baseB, 0, 0)) {
-            dispalyHTMLCard(card, 40, 40, cardWidth, cardHeight, 'BaseB',contentObj.cardB)
-            console.log('Planet Collission B');
+            if (updateHtml) {
+                dispalyHTMLCard(card, 40, 40, cardWidth, cardHeight, 'BaseB', contentObj.cardB)
+                updateHtmlFn()
+            }
         }
+
         if (checkForCollision(player, baseC, 0, 0)) {
-            dispalyHTMLCard(card, 40, 70, cardWidth, cardHeight, 'BaseC',contentObj.cardC)
-            console.log('Planet Collission C');
+            if (updateHtml) {
+                dispalyHTMLCard(card, 40, 70, cardWidth, cardHeight, 'BaseC', contentObj.cardC)
+                updateHtmlFn()
+            }
+        }
+
+        if(checkForCollision(player, spaceShip, 0, 0)) {
+            if (updateHtml) {
+                dispalyHTMLCard(card, 80, 10, cardWidth, cardHeight, 'BaseC', contentObj.spaceShip)
+                updateHtmlFn()
+            }
         }
 
 
@@ -506,9 +524,9 @@ animate(0)
 // let particles = new Planet('./assets/images/Background/background.png', 10)
 // particles.x = player.x + player.width / 2
 // particles.y = player.y + player.height
-let cardIsDisplayed = false
-function dispalyHTMLCard(card, offsetTop, OffsetLeft, width, height, className,content) {
-    card.innerHTML=content
+
+function dispalyHTMLCard(card, offsetTop, OffsetLeft, width, height, className, content) {
+    card.innerHTML = content
     card.classList.remove("BaseA", "BaseB", "BaseC")
     cardIsDisplayed = true
     card.style.display = 'flex'
@@ -596,9 +614,8 @@ function updateTracer(x, y, offset) {
 
 
 
-let contentObj={
-    cardA:`<h5>Fight Club</h5>
-    <div> <span>.</span> <span>.</span> <span>.</span> </div>
+let contentObj = {
+    cardA: `<h5>Fight Club</h5>
     <div class="card-content-wrapp">
         <a target="_blank" href="https://borilvtodorov.github.io/boriltodorov.github.io/15-Fighters/index.html" class="card-img-holder"> <img class="card-img" src="./assets/images/otherProjectsImages/Fighting.png" alt=""> </a>
         <div class="card-text-holder"> 
@@ -606,13 +623,12 @@ let contentObj={
           Defeat enemies and upgrade your skills.<br>
           Get the highest score you can<br>
           -----------------------------<br>
-          Build with HTML Canvas,JS
+          Build with HTML Canvas, JS
             
             
         </div>
     </div>`,
-    cardB:`<h5>Color Match</h5>
-    <div> <span>.</span> <span>.</span> <span>.</span> </div>
+    cardB: `<h5>Color Match</h5>
     <div class="card-content-wrapp">
         <a target="_blank" href="https://borilvtodorov.github.io/boriltodorov.github.io/9-ColorMatch/ColorMatch.html" class="card-img-holder"> <img class="card-img" src="./assets/images/otherProjectsImages/Colors.PNG" alt=""> </a>
         <div class="card-text-holder"> 
@@ -620,23 +636,27 @@ let contentObj={
           Make the whole board one color<br>
           Solve the puzzle within the allowed moves<br>
           -----------------------------<br>
-          Build with HTML Canvas,JS
+          Build with HTML, JS
             
             
         </div>
     </div>`,
-    cardC:`<h5>Black Jack</h5>
-    <div> <span>.</span> <span>.</span> <span>.</span> </div>
+    cardC: ` <h5>Black Jack</h5>
     <div class="card-content-wrapp">
         <a target="_blank" href="https://borilvtodorov.github.io/boriltodorov.github.io/6-BlackJack/BlackJack.html" class="card-img-holder"> <img class="card-img" src="./assets/images/otherProjectsImages/BlackJack.PNG" alt=""> </a>
         <div class="card-text-holder"> 
+        8 deck Black Jack Simulator<br>
           Test your luck <br>
           Place your bet and play the dealer<br>
           <br>
           -----------------------------<br>
-          Build with HTML Canvas,JS
-            
-            
+          Build with HTML, JS
         </div>
-    </div>`
+    </div>`,
+    spaceShip:
+    ` <h5>HTML, CSS, JS Website build</h5>
+    <div class="card-content-wrapp">
+        <a target="_blank" href="https://borilvtodorov.github.io/boriltodorov.github.io/12-ResponsiveWeb/index.html" class="card-img-holder"> <img class="card-img" src="./assets/images/otherProjectsImages/DesignWork2.PNG" alt=""> </a>
+        <a target="_blank" href="https://borilvtodorov.github.io/boriltodorov.github.io/14-DesignWork/index.html" class="card-img-holder"> <img class="card-img" src="./assets/images/otherProjectsImages/DesignWork1.PNG" alt=""> </a>
+    </div>`,
 }
